@@ -449,4 +449,4 @@ DEPENDENCIES
   websocket-client-simple!
 
 BUNDLED WITH
-   1.17.2
+   2.3.26
