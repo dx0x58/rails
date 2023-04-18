@@ -1,0 +1,27 @@
+version: '3.9'
+
+x-base: &base
+  build:
+    context: .
+    dockerfile: ./.devcontainer/Dockerfile
+
+services:
+  bash: &bash
+    <<: *base
+    image: rails_dev:latest
+    command: /bin/bash 
+    volumes:
+      - ./:/app
+
+  test:
+    <<: *bash
+    command: /bin/bash
+    depends_on:
+      - memcached
+    profiles:
+      - donotstart
+
+  memcached:
+    image: bitnami/memcached:latest
+    ports:
+      - '11211:11211'

@@ -1,0 +1,17 @@
+version: '7'
+
+compose:
+  files:
+    - ./docker-compose.yml
+
+interaction:
+  bash:
+    description: Opens the Bash shell in rails container
+    service: bash
+    entrypoint: /app/boot.sh
+
+
+  test:
+    desc: run AS test
+    service: test
+

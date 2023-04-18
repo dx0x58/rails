@@ -1,18 +1,23 @@
-bundle install
-yarn install
+#!/bin/bash
 
-sudo chown -R vscode:vscode /usr/local/bundle
+set -e
 
-sudo service postgresql start
-sudo service mariadb start
-sudo service redis-server start
-sudo service memcached start
+services=("postgresql" "mariadb" "redis-server" "memcached")
 
-# Create PostgreSQL users and databases
-sudo su postgres -c "createuser --superuser vscode"
-sudo su postgres -c "createdb -O vscode -E UTF8 -T template0 activerecord_unittest"
-sudo su postgres -c "createdb -O vscode -E UTF8 -T template0 activerecord_unittest2"
+# Start services if not already running and wait for them to start
+for service in "${services[@]}"
+do
+  if [ "$(systemctl is-active $service)" != "active" ]; then
+    echo "Starting $service service..."
+    sudo service $service start
+  else
+    echo "$service service is already running"
+  fi
+  until [ "$(systemctl is-active $service)" == "active" ]; do
+    sleep 1
+  done
+done
 
-# Create MySQL database and databases
-cd activerecord
-MYSQL_CODESPACES=1 bundle exec rake db:mysql:build
+# Start a bash shell
+echo "Starting bash shell..."
+exec /bin/bash

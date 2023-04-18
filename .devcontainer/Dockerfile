@@ -2,8 +2,29 @@ ARG RUBY_VERSION="2.7.7"
 
 FROM dreg.sbmt.io/instamart/base/ruby:${RUBY_VERSION}-build AS instamart
 
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
+
+RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
+    && apt-get -y install --no-install-recommends \
+        mariadb-server libmariadb-dev \
+        postgresql postgresql-client postgresql-contrib libpq-dev \
+        redis-server memcached \
+        ffmpeg mupdf mupdf-tools libvips poppler-utils
+
+#
+# RUN apt-get install wget 
+#
+# ARG IMAGEMAGICK_VERSION="7.1.0-5"
+# RUN wget -qO /tmp/im.tar.xz https://imagemagick.org/archive/releases/ImageMagick-$IMAGEMAGICK_VERSION.tar.xz \
+#     && wget -qO /tmp/im.sig https://imagemagick.org/archive/releases/ImageMagick-$IMAGEMAGICK_VERSION.tar.xz.asc \
+#     && gpg --batch --keyserver keyserver.ubuntu.com --recv 89AB63D48277377A \
+#     && gpg --batch --verify /tmp/im.sig /tmp/im.tar.xz \
+#     && tar xJf /tmp/im.tar.xz -C /tmp \
+#     && cd /tmp/ImageMagick-$IMAGEMAGICK_VERSION \
+#     && ./configure --with-rsvg && make -j 9 && make install \
+#     && ldconfig /usr/local/lib \
+#     && rm -rf /tmp/*
+
+RUN apt-get install -y --no-install-recommends \
     libsqlite3-dev \
     postgresql-client \
     libpq-dev \
@@ -35,4 +56,7 @@ RUN cd /tmp/rails \
     && yarn install \
     && rm -rf /tmp/rails
 
-#RUN chown -R vscode:vscode /usr/local/rvm
+WORKDIR /app
+COPY ./boot.sh .
+RUN chmod +x /app/boot.sh
+ENTRYPOINT ["./boot.sh"]
