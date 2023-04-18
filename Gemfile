@@ -26,6 +26,9 @@ gem "coffee-rails"
 gem "sass-rails"
 gem "turbolinks", "~> 5"
 
+
+gem 'bigdecimal', '1.4.2'
+
 # require: false so bcrypt is loaded only when has_secure_password is used.
 # This is to avoid Active Model (and by extension the entire framework)
 # being dependent on a binary library.
@@ -116,7 +119,7 @@ platforms :ruby, :mswin, :mswin64, :mingw, :x64_mingw do
   gem "nokogiri", ">= 1.6.8"
 
   # Needed for compiling the ActionDispatch::Journey parser.
-  gem "racc", ">=1.4.6", require: false
+  gem "racc", ">=1.6", require: false
 
   # Active Record.
   gem "sqlite3", "~> 1.3", ">= 1.3.6"
